@@ -1,0 +1,53 @@
+.refuel-count {
+  font-size: 28px;
+  color: #999;
+}
+
+.refuel-list-scroll {
+  height: calc(100vh - 200px);
+}
+
+.refuel-card {
+  cursor: pointer;
+}
+
+.refuel-date {
+  font-size: 30px;
+  font-weight: 600;
+  color: #333;
+}
+
+.refuel-delete {
+  font-size: 24px;
+  padding: 4px 8px;
+}
+
+.refuel-info-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.refuel-info-item {
+  text-align: center;
+  font-size: 24px;
+}
+
+.refuel-info-value {
+  display: block;
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin-top: 4px;
+}
+
+.refuel-info-value.danger {
+  color: #ff4d4f;
+}
+
+.refuel-footer {
+  font-size: 24px;
+}
+
+.ml-8 {
+  margin-left: 8px;
+}

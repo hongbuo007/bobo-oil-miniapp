@@ -1,0 +1,27 @@
+.picker-input {
+  display: flex;
+  align-items: center;
+  color: #333;
+}
+
+.actual-cost-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f6ffed;
+  border-color: #b7eb8f;
+}
+
+.actual-cost-text {
+  font-size: 32px;
+  font-weight: 700;
+  color: #52c41a;
+}
+
+.actual-cost-hint {
+  font-size: 22px;
+}
+
+.submit-area {
+  padding: 16px 0 60px;
+}

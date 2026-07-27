@@ -1,0 +1,42 @@
+.vehicle-count {
+  font-size: 28px;
+  color: #999;
+}
+
+.vehicle-card {
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.vehicle-card.active {
+  border: 2px solid #1890ff;
+  box-shadow: 0 2px 12px rgba(24, 144, 255, 0.15);
+}
+
+.vehicle-card-name {
+  font-size: 32px;
+  font-weight: 600;
+  color: #333;
+}
+
+.vehicle-card-info {
+  font-size: 26px;
+  display: flex;
+}
+
+.vehicle-delete {
+  font-size: 24px;
+  padding: 4px 8px;
+}
+
+.vehicle-card-meta {
+  flex-wrap: wrap;
+}
+
+.ml-8 {
+  margin-left: 8px;
+}
+
+.ml-16 {
+  margin-left: 16px;
+}

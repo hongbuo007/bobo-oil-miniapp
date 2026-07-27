@@ -1,0 +1,66 @@
+.vehicle-bar {
+  padding: 16px 24px;
+  background: #fff;
+  border-radius: 12px;
+  font-size: 28px;
+}
+
+.vehicle-name {
+  color: #333;
+  font-weight: 500;
+}
+
+.vehicle-switch {
+  font-size: 24px;
+}
+
+.latest-card {
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.latest-value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.latest-number {
+  font-size: 72px;
+  font-weight: 700;
+  color: #1890ff;
+  line-height: 1.2;
+}
+
+.latest-number.danger {
+  color: #ff4d4f;
+}
+
+.latest-cost {
+  font-size: 28px;
+  color: #999;
+  margin-top: 8px;
+}
+
+.summary-list {
+  margin-top: 8px;
+}
+
+.summary-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 28px;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-value {
+  font-weight: 600;
+  color: #333;
+}
+
+.action-row {
+  padding: 16px 0 40px;
+}
