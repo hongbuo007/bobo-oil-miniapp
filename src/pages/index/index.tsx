@@ -130,8 +130,16 @@ export default function DashboardPage() {
             <Text className="summary-value">{formatMoney(stats.totalCost)}</Text>
           </View>
           <View className="summary-item flex-between">
+            <Text className="text-secondary">累计优惠</Text>
+            <Text className="summary-value">{formatMoney(stats.totalDiscount)}</Text>
+          </View>
+          <View className="summary-item flex-between">
             <Text className="text-secondary">加油次数</Text>
             <Text className="summary-value">{stats.recordCount} 次</Text>
+          </View>
+          <View className="summary-item flex-between">
+            <Text className="text-secondary">日均行程</Text>
+            <Text className="summary-value">{stats.avgTripDistance > 0 ? `${stats.avgTripDistance} km` : '-'}</Text>
           </View>
           <View className="summary-item flex-between">
             <Text className="text-secondary">平均每公里</Text>

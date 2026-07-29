@@ -1,3 +1,37 @@
+/* 汇总指标卡 */
+.summary-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-row {
+  display: flex;
+  gap: 12px;
+}
+
+.summary-card-item {
+  flex: 1;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.summary-card-value {
+  display: block;
+  font-size: 36px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.summary-card-label {
+  font-size: 22px;
+  color: #999;
+}
+
 .stats-tabs {
   display: flex;
   background: #fff;

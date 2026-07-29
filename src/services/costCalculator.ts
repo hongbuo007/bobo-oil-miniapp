@@ -9,7 +9,9 @@ export interface MonthlyStats {
   totalMileage: number;
   totalFuel: number;
   totalCost: number;
+  totalDiscount: number;
   avgConsumption: number;
+  avgTripDistance: number;
   costPerKm: number;
   recordCount: number;
 }
@@ -22,6 +24,8 @@ export interface DashboardStats {
   totalMileage: number;
   totalFuel: number;
   totalCost: number;
+  totalDiscount: number;
+  avgTripDistance: number;
   recordCount: number;
 }
 
@@ -47,9 +51,19 @@ export function calculateDashboardStats(records: RefuelRecord[]): DashboardStats
 
   const totalFuel = records.reduce((sum, r) => sum + r.fuelAmount, 0);
   const totalCost = records.reduce((sum, r) => sum + getActualCost(r), 0);
-  const totalMileage = records.length > 0
+  const totalDiscount = records.reduce((sum, r) => sum + (r.discount || 0), 0);
+  const totalMileage = records.length > 1
     ? records[records.length - 1].currentMileage - records[0].currentMileage
     : 0;
+
+  // 日均行程
+  let avgTripDistance = 0;
+  if (records.length > 1) {
+    const firstDate = new Date(records[0].date);
+    const lastDate = new Date(records[records.length - 1].date);
+    const days = Math.max(1, Math.ceil((lastDate.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24)));
+    avgTripDistance = Math.round((totalMileage / days) * 100) / 100;
+  }
 
   return {
     latestConsumption,
@@ -59,6 +73,8 @@ export function calculateDashboardStats(records: RefuelRecord[]): DashboardStats
     totalMileage,
     totalFuel: Math.round(totalFuel * 100) / 100,
     totalCost: Math.round(totalCost * 100) / 100,
+    totalDiscount: Math.round(totalDiscount * 100) / 100,
+    avgTripDistance,
     recordCount: records.length,
   };
 }
@@ -76,9 +92,18 @@ export function calculateMonthlyStats(records: RefuelRecord[]): MonthlyStats[] {
     const sorted = monthRecords.sort((a, b) => a.date.localeCompare(b.date));
     const totalFuel = sorted.reduce((sum, r) => sum + r.fuelAmount, 0);
     const totalCost = sorted.reduce((sum, r) => sum + getActualCost(r), 0);
+    const totalDiscount = sorted.reduce((sum, r) => sum + (r.discount || 0), 0);
     const totalMileage = sorted.length > 1
       ? sorted[sorted.length - 1].currentMileage - sorted[0].currentMileage
       : 0;
+
+    let avgTripDistance = 0;
+    if (sorted.length > 1) {
+      const firstDate = new Date(sorted[0].date);
+      const lastDate = new Date(sorted[sorted.length - 1].date);
+      const days = Math.max(1, Math.ceil((lastDate.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24)));
+      avgTripDistance = Math.round((totalMileage / days) * 100) / 100;
+    }
 
     const validRecords = sorted.filter(r => r.calculatedConsumption !== null);
     const avgConsumption = validRecords.length > 0
@@ -90,7 +115,9 @@ export function calculateMonthlyStats(records: RefuelRecord[]): MonthlyStats[] {
       totalMileage,
       totalFuel: Math.round(totalFuel * 100) / 100,
       totalCost: Math.round(totalCost * 100) / 100,
+      totalDiscount: Math.round(totalDiscount * 100) / 100,
       avgConsumption: Math.round(avgConsumption * 100) / 100,
+      avgTripDistance,
       costPerKm: totalMileage > 0 ? Math.round((totalCost / totalMileage) * 10000) / 10000 : 0,
       recordCount: sorted.length,
     });

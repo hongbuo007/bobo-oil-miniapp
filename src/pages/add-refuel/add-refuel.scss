@@ -4,22 +4,111 @@
   color: #333;
 }
 
-.actual-cost-display {
+/* 小熊油耗风格三列布局 */
+.form-row-three {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
+}
+
+.form-input-sm {
+  flex: 1;
+  text-align: center;
+  padding: 12px 8px;
+  font-size: 28px;
+}
+
+.form-row-multiply,
+.form-row-equal,
+.form-row-slash {
+  font-size: 28px;
+  color: #999;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.form-input-calc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border-color: #d9d9d9;
+  color: #666;
+  min-height: 80px;
+  font-size: 28px;
+}
+
+.actual-highlight {
   background: #f6ffed;
   border-color: #b7eb8f;
-}
-
-.actual-cost-text {
-  font-size: 32px;
-  font-weight: 700;
   color: #52c41a;
+  font-weight: 700;
 }
 
-.actual-cost-hint {
-  font-size: 22px;
+/* 加油站历史选择器 */
+.station-picker-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.station-picker-popup {
+  width: 100%;
+  max-height: 50vh;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.station-picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.station-picker-title {
+  font-size: 30px;
+  font-weight: 600;
+  color: #333;
+}
+
+.station-picker-close {
+  font-size: 36px;
+  color: #999;
+  padding: 4px;
+}
+
+.station-picker-list {
+  max-height: 360px;
+}
+
+.station-picker-item {
+  padding: 24px 32px;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 28px;
+  color: #333;
+  transition: background 0.2s;
+}
+
+.station-picker-item:active,
+.station-picker-item.active {
+  background: #e6f4ff;
+  color: #1890ff;
 }
 
 .submit-area {

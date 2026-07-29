@@ -35,6 +35,18 @@ export default function StatisticsPage() {
 
   const monthlyStats = useMemo(() => calculateMonthlyStats(records), [records]);
 
+  // 汇总数据
+  const summary = useMemo(() => {
+    if (monthlyStats.length === 0) return null;
+    return {
+      totalCost: monthlyStats.reduce((s, m) => s + m.totalCost, 0),
+      totalFuel: monthlyStats.reduce((s, m) => s + m.totalFuel, 0),
+      totalDiscount: monthlyStats.reduce((s, m) => s + m.totalDiscount, 0),
+      totalMileage: monthlyStats.reduce((s, m) => s + m.totalMileage, 0),
+      totalRecords: monthlyStats.reduce((s, m) => s + m.recordCount, 0),
+    };
+  }, [monthlyStats]);
+
   // 油耗趋势数据（最近12个月）
   const recentStats = useMemo(() => monthlyStats.slice(-12), [monthlyStats]);
   const maxConsumption = Math.max(...recentStats.map(s => s.avgConsumption), 1);
@@ -126,27 +138,57 @@ export default function StatisticsPage() {
       )}
 
       {tab === 'table' && (
-        <View className="card">
-          <Text className="card-title">月度汇总</Text>
-          <View className="monthly-table">
-            <View className="table-header flex-between">
-              <Text className="th-col month-col">月份</Text>
-              <Text className="th-col">里程</Text>
-              <Text className="th-col">油耗</Text>
-              <Text className="th-col">油费</Text>
-              <Text className="th-col">次数</Text>
-            </View>
-            {monthlyStats.map((stat) => (
-              <View key={stat.month} className="table-row flex-between">
-                <Text className="td-col month-col">{stat.month}</Text>
-                <Text className="td-col">{stat.totalMileage}km</Text>
-                <Text className="td-col">{stat.avgConsumption > 0 ? stat.avgConsumption.toFixed(1) : '-'}</Text>
-                <Text className="td-col">¥{stat.totalCost.toFixed(0)}</Text>
-                <Text className="td-col">{stat.recordCount}次</Text>
+        <>
+          {/* 汇总指标卡 */}
+          {summary && (
+            <View className="summary-cards mb-24">
+              <View className="summary-row">
+                <View className="summary-card-item">
+                  <Text className="summary-card-value">¥{summary.totalCost.toFixed(0)}</Text>
+                  <Text className="summary-card-label">累计油费</Text>
+                </View>
+                <View className="summary-card-item">
+                  <Text className="summary-card-value">{summary.totalFuel.toFixed(0)}L</Text>
+                  <Text className="summary-card-label">累计油量</Text>
+                </View>
               </View>
-            ))}
+              <View className="summary-row">
+                <View className="summary-card-item">
+                  <Text className="summary-card-value">¥{summary.totalDiscount.toFixed(0)}</Text>
+                  <Text className="summary-card-label">累计优惠</Text>
+                </View>
+                <View className="summary-card-item">
+                  <Text className="summary-card-value">{summary.totalRecords}次</Text>
+                  <Text className="summary-card-label">加油次数</Text>
+                </View>
+              </View>
+            </View>
+          )}
+
+          <View className="card">
+            <Text className="card-title">月度汇总</Text>
+            <View className="monthly-table">
+              <View className="table-header flex-between">
+                <Text className="th-col month-col">月份</Text>
+                <Text className="th-col">里程</Text>
+                <Text className="th-col">油耗</Text>
+                <Text className="th-col">油费</Text>
+                <Text className="th-col">优惠</Text>
+                <Text className="th-col">日均行程</Text>
+              </View>
+              {monthlyStats.map((stat) => (
+                <View key={stat.month} className="table-row flex-between">
+                  <Text className="td-col month-col">{stat.month.slice(5)}月</Text>
+                  <Text className="td-col">{stat.totalMileage}km</Text>
+                  <Text className="td-col">{stat.avgConsumption > 0 ? stat.avgConsumption.toFixed(1) : '-'}</Text>
+                  <Text className="td-col">¥{stat.totalCost.toFixed(0)}</Text>
+                  <Text className="td-col">{stat.totalDiscount > 0 ? `¥${stat.totalDiscount.toFixed(0)}` : '-'}</Text>
+                  <Text className="td-col">{stat.avgTripDistance > 0 ? `${stat.avgTripDistance}km` : '-'}</Text>
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
+        </>
       )}
     </View>
   );

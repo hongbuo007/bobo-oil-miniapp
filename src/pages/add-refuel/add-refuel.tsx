@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { View, Text, Input, Switch, Picker, Button } from '@tarojs/components';
+import { useState, useMemo } from 'react';
+import { View, Text, Input, Switch, Picker, Button, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useVehicles } from '../../stores/useVehicleStore';
 import { useRefuels } from '../../stores/useRefuelStore';
@@ -11,7 +11,7 @@ import './add-refuel.scss';
 
 export default function AddRefuelPage() {
   const { activeVehicle } = useVehicles();
-  const { addRecord } = useRefuels();
+  const { addRecord, records } = useRefuels();
 
   const [form, setForm] = useState<RefuelFormData>({
     vehicleId: activeVehicle?.id || '',
@@ -30,6 +30,15 @@ export default function AddRefuelPage() {
     note: '',
   });
   const [loading, setLoading] = useState(false);
+  const [showStationPicker, setShowStationPicker] = useState(false);
+
+  // 从历史记录中提取加油站名称列表（去重）
+  const stationHistory = useMemo(() => {
+    const names = records
+      .map(r => r.stationName)
+      .filter((name): name is string => !!name && name.trim().length > 0);
+    return [...new Set(names)].slice(0, 20);
+  }, [records]);
 
   const updateField = (key: string, value: any) => {
     const newForm = { ...form, [key]: value };
@@ -37,8 +46,18 @@ export default function AddRefuelPage() {
     if (key === 'totalCost' || key === 'discount') {
       newForm.actualCost = Math.max(0, (newForm.totalCost || 0) - (newForm.discount || 0));
     }
+    // 自动计算机显金额 = 单价 × 加油量
+    if (key === 'unitPrice' || key === 'fuelAmount') {
+      newForm.totalCost = Math.round((newForm.unitPrice || 0) * (newForm.fuelAmount || 0) * 100) / 100;
+      newForm.actualCost = Math.max(0, newForm.totalCost - (newForm.discount || 0));
+    }
     setForm(newForm);
   };
+
+  // 实付单价 = 实付金额 / 加油量
+  const actualUnitPrice = form.fuelAmount > 0
+    ? (form.actualCost / form.fuelAmount).toFixed(2)
+    : '0.00';
 
   const handleSubmit = async () => {
     if (!form.vehicleId) {
@@ -97,60 +116,51 @@ export default function AddRefuelPage() {
           />
         </View>
 
-        {/* 加油量 */}
+        {/* 机显单价 × 加油量 = 机显金额 */}
         <View className="form-group">
-          <Text className="form-label">加油量 (L)</Text>
-          <Input
-            className="form-input"
-            type="digit"
-            placeholder="请输入加油升数"
-            value={form.fuelAmount ? String(form.fuelAmount) : ''}
-            onInput={e => updateField('fuelAmount', Number(e.detail.value))}
-          />
+          <Text className="form-label">机显单价 × 加油量 = 机显金额</Text>
+          <View className="form-row-three">
+            <Input
+              className="form-input form-input-sm"
+              type="digit"
+              placeholder="单价"
+              value={form.unitPrice ? String(form.unitPrice) : ''}
+              onInput={e => updateField('unitPrice', Number(e.detail.value))}
+            />
+            <Text className="form-row-multiply">×</Text>
+            <Input
+              className="form-input form-input-sm"
+              type="digit"
+              placeholder="升数"
+              value={form.fuelAmount ? String(form.fuelAmount) : ''}
+              onInput={e => updateField('fuelAmount', Number(e.detail.value))}
+            />
+            <Text className="form-row-equal">=</Text>
+            <View className="form-input form-input-sm form-input-calc">
+              <Text>¥ {form.totalCost.toFixed(2)}</Text>
+            </View>
+          </View>
         </View>
 
-        {/* 单价 */}
+        {/* 实付单价 / 优惠金额 / 实付金额 */}
         <View className="form-group">
-          <Text className="form-label">单价 (元/L)</Text>
-          <Input
-            className="form-input"
-            type="digit"
-            placeholder="请输入油价"
-            value={form.unitPrice ? String(form.unitPrice) : ''}
-            onInput={e => updateField('unitPrice', Number(e.detail.value))}
-          />
-        </View>
-
-        {/* 总金额 */}
-        <View className="form-group">
-          <Text className="form-label">机显金额 (元)</Text>
-          <Input
-            className="form-input"
-            type="digit"
-            placeholder="加油机显示的总金额"
-            value={form.totalCost ? String(form.totalCost) : ''}
-            onInput={e => updateField('totalCost', Number(e.detail.value))}
-          />
-        </View>
-
-        {/* 优惠金额 */}
-        <View className="form-group">
-          <Text className="form-label">优惠金额 (元)</Text>
-          <Input
-            className="form-input"
-            type="digit"
-            placeholder="优惠/折扣金额"
-            value={form.discount ? String(form.discount) : ''}
-            onInput={e => updateField('discount', Number(e.detail.value))}
-          />
-        </View>
-
-        {/* 实付金额（自动计算） */}
-        <View className="form-group">
-          <Text className="form-label">实付金额 (元)</Text>
-          <View className="form-input actual-cost-display">
-            <Text className="actual-cost-text">¥ {form.actualCost.toFixed(2)}</Text>
-            <Text className="text-light actual-cost-hint">= 机显金额 - 优惠金额</Text>
+          <Text className="form-label">实付单价 / 优惠金额 / 实付金额</Text>
+          <View className="form-row-three">
+            <View className="form-input form-input-sm form-input-calc">
+              <Text>¥ {actualUnitPrice}</Text>
+            </View>
+            <Text className="form-row-slash">/</Text>
+            <Input
+              className="form-input form-input-sm"
+              type="digit"
+              placeholder="优惠"
+              value={form.discount ? String(form.discount) : ''}
+              onInput={e => updateField('discount', Number(e.detail.value))}
+            />
+            <Text className="form-row-slash">/</Text>
+            <View className="form-input form-input-sm form-input-calc actual-highlight">
+              <Text>¥ {form.actualCost.toFixed(2)}</Text>
+            </View>
           </View>
         </View>
 
@@ -167,7 +177,7 @@ export default function AddRefuelPage() {
           </Picker>
         </View>
 
-        {/* 加油站 */}
+        {/* 加油站（支持历史选择） */}
         <View className="form-group">
           <Text className="form-label">加油站</Text>
           <Input
@@ -175,7 +185,32 @@ export default function AddRefuelPage() {
             placeholder="请输入加油站名称"
             value={form.stationName}
             onInput={e => updateField('stationName', e.detail.value)}
+            onFocus={() => stationHistory.length > 0 && setShowStationPicker(true)}
           />
+          {showStationPicker && stationHistory.length > 0 && (
+            <View className="station-picker-overlay" onClick={() => setShowStationPicker(false)}>
+              <View className="station-picker-popup" onClick={e => e.stopPropagation()}>
+                <View className="station-picker-header">
+                  <Text className="station-picker-title">选择历史加油站</Text>
+                  <Text className="station-picker-close" onClick={() => setShowStationPicker(false)}>✕</Text>
+                </View>
+                <ScrollView className="station-picker-list" scrollY>
+                  {stationHistory.map((name) => (
+                    <View
+                      key={name}
+                      className={`station-picker-item ${form.stationName === name ? 'active' : ''}`}
+                      onClick={() => {
+                        updateField('stationName', name);
+                        setShowStationPicker(false);
+                      }}
+                    >
+                      <Text>{name}</Text>
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            </View>
+          )}
         </View>
 
         {/* 备注 */}

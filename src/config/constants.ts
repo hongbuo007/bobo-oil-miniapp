@@ -22,6 +22,6 @@ export const ALGORITHM_NAMES: Record<number, string> = {
   4: '两点亮灯法(跨记录)',
 };
 
-export const APP_NAME = 'bobo油耗';
+export const APP_NAME = 'BOBO油耗';
 export const APP_VERSION = '1.0.0';
 export const API_BASE = 'https://youhao.hongbuo007.cn/api';
