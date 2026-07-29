@@ -13,7 +13,7 @@ export default {
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#1890ff',
-    navigationBarTitleText: 'bobo油耗',
+    navigationBarTitleText: 'BOBO油耗',
     navigationBarTextStyle: 'white',
   },
   tabBar: {

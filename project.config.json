@@ -1,7 +1,7 @@
 {
   "miniprogramRoot": "dist/",
   "projectname": "bobo-oil-miniapp",
-  "description": "bobo油耗 - 车辆油耗管理",
+  "description": "BOBO油耗 - 车辆油耗管理",
   "appid": "your-wechat-appid",
   "setting": {
     "urlCheck": true,
